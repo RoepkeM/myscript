@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Hacer un update y del sistema
+
+# Varaibles
+readonly NO_ERROR=0
+TASK="NO TASK YET"
+
+# Verificar que el usuario sea root
+if [[ "${UID}" != 0 ]]
+then
+ echo "You need root privilages to run this!!"
+ echo "Pls run as super user..."
+ exit 1
+fi 
+
+# command to update,upgrade and check if succsesfull "-qq is for not showing all
+# the proses"
+
+TASK="UPDATE"
+checkup(){
+if [[ "${?}" -eq  NO_ERROR ]]
+ then
+  echo ">>!!  ${TASK} succsesfull !!<< "
+else
+  echo ">>!! Error on the ${TASK} !!<< "
+fi
+}
+
+apt-get -qq update -y
+checkup
+
+TASK="UPGRADE"
+apt-get -qq upgrade -y
+checkup
+
+TASK="INSTALL RESTRICTED-EXTRAS"
+apt-get -qq  install ubuntu-restricted-extras -y
+checkup
+
+#------------go-----------
+# Install go
+TASK="INSTALL GO"
+apt -q install golang
+checkup
+
+#---------Docker---------
+#Install Docker
+# First remove old Docker
+apt-get -qq remove docker docker-engine docker.io containerd runc
+
+# Install Docker's dependencies
+apt-get -qq install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+# Add Docker's official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+# Set up the stable repository
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+# Install Docker engine
+apt-get -qq update
+TASK="INSTALL DOCKER"
+apt-get install docker-ce docker-ce-cli containerd.io
+checkup
+
+
