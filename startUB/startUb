@@ -41,7 +41,7 @@ checkup
 #------------go-----------
 # Install Go
 TASK="INSTALL GO"
-apt -q install golang
+apt -q install golang -y
 checkup
 
 #---------Docker---------
@@ -51,11 +51,11 @@ apt-get -qq remove docker docker-engine docker.io containerd runc
 
 # Install Docker's dependencies
 apt-get -qq install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg-agent \
-    software-properties-common
+ apt-transport-https \
+ ca-certificates \
+ curl \
+ gnupg-agent \
+ software-properties-common -y
 
 # Add Docker's official GPG key
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -64,11 +64,11 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
-   stable"
+   stable" -y
 
 # Install Docker engine
 apt-get -qq update
 TASK="INSTALL DOCKER"
-apt-get install docker-ce docker-ce-cli containerd.io
+apt-get install docker-ce docker-ce-cli containerd.io -y
 checkup
 
