@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# This is small script that updates, upgrades Kali linux  and installs Go and Docker
+
+# Varaibles
+readonly NO_ERROR=0
+TASK="NO TASK YET"
+
+# Verify that the user is root
+if [[ "${UID}" != 0 ]]
+then
+ echo "You need root privileges to run this!!"
+ echo "Please run as superuser."
+ exit 1
+fi 
+
+# command to update,upgrade and check if successfull "-qq is for not showing all
+# the proses"
+
+TASK="UPDATE"
+checkup(){
+if [[ "${?}" -eq  NO_ERROR ]]
+ then
+  echo ">>!!  ${TASK} succsesfull !!<< "
+else
+  echo ">>!! Error on the ${TASK} !!<< "
+fi
+}
+
+apt-get -qq update -y
+checkup
+
+TASK="UPGRADE"
+apt-get -qq upgrade -y
+checkup
+
+#------------go-----------
+# Install Go
+TASK="INSTALL GO"
+apt -q install golang -y
+checkup
+
+#---------Docker---------
+#Install Docker
+apt update
+
+#get PGP key
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add 
+-
+
+#Configure ATP for docker
+echo 'deb [arch=amd64] https://download.docker.com/linux/debian buster stable' |
+sudo tee /etc/apt/sources.list.d/docker.list
+
+# Update APT
+apr update
+
+# Remove outdate dockers
+apt remove docker docker-engine docker.io
+
+# Install Docker
+TASK="INSTALL DOCKER"
+apt install docker-ce -y
+checkup
